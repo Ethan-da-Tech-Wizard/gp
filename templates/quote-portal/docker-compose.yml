@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  quote-portal:
+    build: .
+    container_name: quote_portal_service
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PORT=8080
+      - QUOTE_PORTAL_DB=/app/data/quote_portal.db

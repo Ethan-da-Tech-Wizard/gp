@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arizona Ops Data Cleaner & Phone Standardizer</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(18, 25, 41, 0.85);
+      --border: rgba(255, 255, 255, 0.1);
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.3);
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 2rem; min-height: 100vh; }
+
+    .header { max-width: 1000px; margin: 0 auto 2rem auto; text-align: center; }
+    .header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #10b981, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .header p { color: var(--text-muted); font-size: 1rem; }
+
+    .container { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+
+    .card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+
+    .dropzone { border: 2px dashed #374151; border-radius: 8px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.2s; background: rgba(0,0,0,0.2); }
+    .dropzone:hover, .dropzone.dragover { border-color: var(--accent); background: var(--accent-glow); }
+    
+    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem; }
+    .stat-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid var(--border); }
+    .stat-val { font-size: 1.5rem; font-weight: bold; color: var(--accent); }
+    .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; }
+
+    textarea { width: 100%; height: 160px; background: #030712; border: 1px solid #374151; border-radius: 6px; padding: 1rem; color: #e5e7eb; font-family: monospace; font-size: 0.9rem; resize: vertical; }
+
+    .actions { display: flex; gap: 1rem; margin-top: 1rem; }
+    .btn { padding: 0.75rem 1.5rem; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: transform 0.1s, opacity 0.2s; }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+    .btn-secondary { background: #374151; color: #fff; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { border: 1px solid var(--border); padding: 0.75rem; text-align: left; font-size: 0.85rem; }
+    th { background: rgba(255,255,255,0.05); color: var(--accent); }
+    tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Arizona Customer Data Sanitizer</h1>
+    <p>Clean messy customer lists, standardize US/Arizona phone numbers, remove duplicate records, and format CSVs instantly.</p>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h3 style="margin-bottom: 0.75rem;">1. Input Raw CSV / Text Data</h3>
+      <textarea id="rawInput" placeholder="Name, Phone, City&#10;John Doe, 4805550199, Mesa&#10;Jane Smith, (602) 555-0144, Phoenix&#10;John Doe, 480-555-0199, Mesa AZ"></textarea>
+      
+      <div class="actions">
+        <button class="btn btn-primary" onclick="cleanData()">✨ Clean & Standardize Data</button>
+        <button class="btn btn-secondary" onclick="loadSampleData()">📋 Load Sample Data</button>
+        <button class="btn btn-secondary" onclick="downloadCSV()">💾 Export Clean CSV</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>2. Sanitization Summary</h3>
+      <div class="stats-bar">
+        <div class="stat-box"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Total Rows</div></div>
+        <div class="stat-box"><div class="stat-val" id="statClean">0</div><div class="stat-label">Valid Output</div></div>
+        <div class="stat-box"><div class="stat-val" id="statDups">0</div><div class="stat-label">Duplicates Removed</div></div>
+        <div class="stat-box"><div class="stat-val" id="statFixed">0</div><div class="stat-label">Phones Standardized</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>3. Cleaned Records Preview</h3>
+      <div style="overflow-x: auto;">
+        <table id="previewTable">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Name</th>
+              <th>Formatted Phone</th>
+              <th>Raw Phone</th>
+              <th>City / Notes</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="5" style="text-align:center; color: var(--text-muted);">No data processed yet. Click "Clean & Standardize Data".</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function formatArizonaPhone(phoneStr) {
+      if (!phoneStr) return { formatted: '', status: 'empty' };
+      const digits = phoneStr.replace(/\D/g, '');
+      let cleanDigits = digits;
+      if (digits.length === 11 && digits.startsWith('1')) {
+        cleanDigits = digits.substring(1);
+      }
+      
+      if (cleanDigits.length === 10) {
+        const area = cleanDigits.substring(0, 3);
+        const prefix = cleanDigits.substring(3, 6);
+        const line = cleanDigits.substring(6, 10);
+        return { formatted: `(${area}) ${prefix}-${line}`, status: 'standardized' };
+      }
+      return { formatted: phoneStr, status: 'invalid' };
+    }
+
+    function cleanData() {
+      const rawText = document.getElementById('rawInput').value.trim();
+      if (!rawText) return;
+
+      const lines = rawText.split('\n');
+      const seen = new Set();
+      let total = 0;
+      let cleanedCount = 0;
+      let dupsCount = 0;
+      let fixedCount = 0;
+
+      const tableBody = document.getElementById('tableBody');
+      tableBody.innerHTML = '';
+
+      lines.forEach((line, idx) => {
+        if (!line.trim() || line.toLowerCase().startsWith('name,')) return; // Skip header
+        total++;
+        
+        const parts = line.split(',').map(s => s.trim());
+        const name = parts[0] || 'Unknown';
+        const rawPhone = parts[1] || '';
+        const extra = parts.slice(2).join(', ');
+
+        const phoneResult = formatArizonaPhone(rawPhone);
+        const dedupKey = `${name.toLowerCase()}|${phoneResult.formatted}`;
+
+        if (seen.has(dedupKey)) {
+          dupsCount++;
+          return; // Skip duplicate
+        }
+        seen.add(dedupKey);
+        cleanedCount++;
+        if (phoneResult.status === 'standardized') fixedCount++;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span style="color:${phoneResult.status === 'standardized' ? '#10b981' : '#f59e0b'}; font-weight:bold;">${phoneResult.status.toUpperCase()}</span></td>
+          <td>${name}</td>
+          <td style="font-family:monospace; font-weight:bold; color:#10b981;">${phoneResult.formatted}</td>
+          <td style="color:#9ca3af;">${rawPhone}</td>
+          <td>${extra}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      document.getElementById('statTotal').innerText = total;
+      document.getElementById('statClean').innerText = cleanedCount;
+      document.getElementById('statDups').innerText = dupsCount;
+      document.getElementById('statFixed').innerText = fixedCount;
+    }
+
+    function loadSampleData() {
+      document.getElementById('rawInput').value = 
+`Name, Phone, City
+John Doe, 4805550199, Mesa
+Jane Smith, (602) 555-0144, Phoenix
+John Doe, 480-555-0199, Mesa AZ
+Desert Plumbing LLC, 520.555.0188, Tucson
+Gilbert Auto Care, +1-480-555-0177, Gilbert`;
+      cleanData();
+    }
+
+    function downloadCSV() {
+      const rows = [];
+      const tableRows = document.querySelectorAll('#tableBody tr');
+      tableRows.forEach(tr => {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length === 5) {
+          rows.push([tds[1].innerText, tds[2].innerText, tds[4].innerText].join(','));
+        }
+      });
+
+      if (rows.length === 0) { alert('No cleaned records to export'); return; }
+      
+      const csvContent = "data:text/csv;charset=utf-8,Name,Formatted Phone,Notes\n" + rows.join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "cleaned_arizona_contacts.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

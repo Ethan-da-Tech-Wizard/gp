@@ -1,0 +1,16 @@
+[Unit]
+Description=Arizona Mobile Software - Quote Portal Service
+After=network.target
+
+[Service]
+Type=simple
+User=ethan
+WorkingDirectory=/opt/quote-portal
+ExecStart=/usr/bin/python3 /opt/quote-portal/server.py
+Restart=always
+RestartSec=5
+Environment=PORT=8080
+Environment=QUOTE_PORTAL_DB=/opt/quote-portal/quote_portal.db
+
+[Install]
+WantedBy=multi-user.target

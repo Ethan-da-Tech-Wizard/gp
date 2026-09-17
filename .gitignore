@@ -20,6 +20,8 @@ env.bak/
 venv.bak/
 *.db
 *.sqlite3
+*.tar.gz
+deployments/client_*/
 
 # Logs
 logs
