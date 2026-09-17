@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mesa Air Masters HVAC - Online Quote Portal</title>
+  <style>
+    body { background: #0b0f19; color: #f8fafc; font-family: system-ui, sans-serif; padding: 2rem; }
+    .card { background: #151d30; border: 1px solid #1e293b; border-radius: 12px; padding: 2rem; max-width: 600px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    h1 { color: #00f3ff; font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .input { width: 100%; padding: 0.75rem; margin: 0.5rem 0 1rem 0; background: #090d16; border: 1px solid #334155; border-radius: 6px; color: #fff; box-sizing: border-box; }
+    .btn { background: linear-gradient(135deg, #00f3ff, #0284c7); color: #000; font-weight: bold; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; width: 100%; font-size: 1rem; }
+    .btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Mesa Air Masters HVAC</h1>
+    <p style="color: #94a3b8; font-size: 0.9rem;">Instant Service Estimate & Scheduling Portal</p>
+    <form id="quoteForm">
+      <label style="font-size: 0.85rem; color: #cbd5e1;">Your Name</label>
+      <input type="text" id="name" class="input" placeholder="e.g. John Smith" required />
+      
+      <label style="font-size: 0.85rem; color: #cbd5e1;">Phone Number</label>
+      <input type="text" id="phone" class="input" placeholder="(480) 555-0199" required />
+      
+      <label style="font-size: 0.85rem; color: #cbd5e1;">Service Needed</label>
+      <select id="service" class="input">
+        <option value="Standard Inspection">Standard Inspection ($150)</option>
+        <option value="Repair / Replacement">Repair / System Replacement ($1,200+)</option>
+        <option value="Emergency Service">Emergency Service Request ($300)</option>
+      </select>
+      
+      <button type="submit" class="btn">Get Instant Estimate & Schedule</button>
+    </form>
+    <div id="result" style="display:none; margin-top: 1.5rem; padding: 1rem; background: rgba(16,185,129,0.15); border: 1px solid #10b981; border-radius: 8px; color: #34d399; font-size: 0.9rem;"></div>
+  </div>
+
+  <script>
+    document.getElementById('quoteForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const service = document.getElementById('service').value;
+      
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('result').innerHTML = `<strong>Estimate Generated for ${name}!</strong><br>Service: ${service}<br>We have sent a SMS confirmation to <strong>${phone}</strong>. Our dispatcher will call within 15 minutes.`;
+    });
+  </script>
+</body>
+</html>
