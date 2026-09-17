@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Target, Layers, FileText, Code2, Zap, Building, ChevronRight, ShieldCheck } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Target, Layers, FileText, Code2, Zap, Palette, Sparkles, Building, ChevronRight, ShieldCheck } from 'lucide-react';
 import { ProspectingCRM } from './components/crm/ProspectingCRM';
 import { HomeServiceQuoteDemo } from './components/demos/HomeServiceQuoteDemo';
 import { OpsDashboardDemo } from './components/demos/OpsDashboardDemo';
@@ -10,30 +10,109 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'crm' | 'demos' | 'legal' | 'stack'>('crm');
   const [activeDemo, setActiveDemo] = useState<'quote' | 'ops' | 'doc'>('quote');
   const [showScriptModal, setShowScriptModal] = useState<boolean>(false);
+  const [currentTheme, setCurrentTheme] = useState<'cyber' | 'emerald' | 'sunset' | 'cosmic'>('cyber');
+  const [customAccent, setCustomAccent] = useState<string>('#00f3ff');
+  const [clientBrandName, setClientBrandName] = useState<string>('Desert Breeze Solutions');
+  const [showThemeCustomizer, setShowThemeCustomizer] = useState<boolean>(false);
+
+  // Apply theme attributes to body
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  }, [currentTheme]);
+
+  const handleCustomColorChange = (hex: string) => {
+    setCustomAccent(hex);
+    document.documentElement.style.setProperty('--primary-accent', hex);
+    document.documentElement.style.setProperty('--primary-glow', `${hex}66`);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
       
+      {/* Dynamic Theme & Personalization Control Bar */}
+      <div className="bg-slate-950/90 border-b border-white/10 py-1.5 px-4 text-xs">
+        <div className="container flex flex-wrap justify-between items-center gap-3">
+          <div className="flex items-center gap-3">
+            <span className="text-cyan-400 font-bold flex items-center gap-1">
+              <Palette className="w-3.5 h-3.5" /> Client Showcase Personalizer:
+            </span>
+            
+            {/* Theme Presets */}
+            <div className="flex items-center gap-1.5">
+              <button 
+                onClick={() => { setCurrentTheme('cyber'); handleCustomColorChange('#00f3ff'); }}
+                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${currentTheme === 'cyber' ? 'bg-cyan-500 text-black font-extrabold shadow-sm' : 'text-slate-400 hover:text-white'}`}
+              >
+                ⚡ Cyber Neon
+              </button>
+              <button 
+                onClick={() => { setCurrentTheme('emerald'); handleCustomColorChange('#10b981'); }}
+                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${currentTheme === 'emerald' ? 'bg-emerald-500 text-black font-extrabold shadow-sm' : 'text-slate-400 hover:text-white'}`}
+              >
+                💎 Emerald Gold
+              </button>
+              <button 
+                onClick={() => { setCurrentTheme('sunset'); handleCustomColorChange('#f97316'); }}
+                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${currentTheme === 'sunset' ? 'bg-orange-500 text-black font-extrabold shadow-sm' : 'text-slate-400 hover:text-white'}`}
+              >
+                🔥 Sunset Flare
+              </button>
+              <button 
+                onClick={() => { setCurrentTheme('cosmic'); handleCustomColorChange('#a855f7'); }}
+                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${currentTheme === 'cosmic' ? 'bg-purple-500 text-black font-extrabold shadow-sm' : 'text-slate-400 hover:text-white'}`}
+              >
+                🔮 Cosmic Violet
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Custom Accent Picker */}
+            <div className="flex items-center gap-1.5 bg-slate-900 px-2 py-0.5 rounded border border-white/10">
+              <span className="text-slate-400 text-[11px]">Brand Accent:</span>
+              <input 
+                type="color" 
+                value={customAccent} 
+                onChange={(e) => handleCustomColorChange(e.target.value)}
+                className="w-4 h-4 rounded cursor-pointer bg-transparent border-0"
+              />
+            </div>
+
+            {/* Client Business Name Customizer */}
+            <div className="flex items-center gap-1.5 bg-slate-900 px-2 py-0.5 rounded border border-white/10">
+              <span className="text-slate-400 text-[11px]">Client Name:</span>
+              <input 
+                type="text" 
+                value={clientBrandName}
+                onChange={(e) => setClientBrandName(e.target.value)}
+                placeholder="Enter client company..."
+                className="bg-transparent text-main font-semibold text-[11px] outline-none w-36"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Navigation Header */}
-      <header className="border-b border-white/10 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-white/10 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 shimmer-effect">
         <div className="container py-3.5 flex flex-wrap justify-between items-center gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
-              <Zap className="w-5 h-5 fill-current" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center text-black font-extrabold shadow-lg shadow-cyan-500/30">
+              <Zap className="w-6 h-6 fill-current" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-base tracking-tight text-main">Ethan</span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-medium">
+                <span className="font-black text-lg tracking-tight text-main">Ethan</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-bold uppercase tracking-wider">
                   Mesa, AZ
                 </span>
               </div>
-              <p className="text-[11px] text-muted">On-Call Software Developer for Arizona Businesses</p>
+              <p className="text-[11px] text-muted font-medium">On-Call Custom Software Developer for Arizona Businesses</p>
             </div>
           </div>
 
           {/* Primary View Switcher */}
-          <nav className="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-white/10">
+          <nav className="flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-white/15 shadow-xl">
             <button 
               onClick={() => setActiveTab('crm')} 
               className={`tab-btn ${activeTab === 'crm' ? 'active' : ''}`}
@@ -71,36 +150,36 @@ export const App: React.FC = () => {
 
       {/* Sub-Header Demo Switcher if in Demos mode */}
       {activeTab === 'demos' && (
-        <div className="bg-slate-900/60 border-b border-white/5 py-2">
+        <div className="bg-slate-900/80 border-b border-white/10 py-2.5">
           <div className="container flex flex-wrap justify-between items-center gap-3">
             <div className="flex items-center gap-3 overflow-x-auto">
-              <span className="text-xs text-muted font-semibold uppercase">Select Demo App:</span>
+              <span className="text-xs text-muted font-bold uppercase tracking-wider">Active Demo:</span>
               <button 
                 onClick={() => setActiveDemo('quote')}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   activeDemo === 'quote' 
-                    ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' 
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-cyan-500/25 text-cyan-300 border border-cyan-400/50 shadow-md shadow-cyan-500/20' 
+                    : 'text-slate-400 hover:text-white bg-slate-800/40'
                 }`}
               >
                 1. Home-Service Quote & Intake
               </button>
               <button 
                 onClick={() => setActiveDemo('ops')}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   activeDemo === 'ops' 
-                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' 
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-amber-500/25 text-amber-300 border border-amber-400/50 shadow-md shadow-amber-500/20' 
+                    : 'text-slate-400 hover:text-white bg-slate-800/40'
                 }`}
               >
-                2. Ops Dashboard & Messy Data Cleaner
+                2. Ops Dashboard & Data Cleaner
               </button>
               <button 
                 onClick={() => setActiveDemo('doc')}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   activeDemo === 'doc' 
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/50 shadow-md shadow-emerald-500/20' 
+                    : 'text-slate-400 hover:text-white bg-slate-800/40'
                 }`}
               >
                 3. Document-to-Data Assistant
@@ -109,7 +188,7 @@ export const App: React.FC = () => {
 
             <button 
               onClick={() => setShowScriptModal(!showScriptModal)} 
-              className="btn btn-secondary py-1 px-3 text-xs"
+              className="btn btn-secondary py-1 px-3 text-xs font-bold"
             >
               📹 1-Min Video Recording Talking Points
             </button>
@@ -118,7 +197,7 @@ export const App: React.FC = () => {
           {/* Screen Recording Talking Points Guide Modal */}
           {showScriptModal && (
             <div className="container mt-2">
-              <div className="p-4 bg-slate-900/95 border border-cyan-500/40 rounded-xl space-y-2 text-xs animate-fade-in shadow-2xl">
+              <div className="p-4 bg-slate-900/95 border border-cyan-500/50 rounded-xl space-y-2 text-xs animate-fade-in shadow-2xl">
                 <div className="flex justify-between items-center border-b border-white/10 pb-1.5">
                   <span className="font-bold text-cyan-400">📹 60-Second Video Pitch Talking Points ({activeDemo.toUpperCase()} DEMO)</span>
                   <button onClick={() => setShowScriptModal(false)} className="text-muted hover:text-white">✕</button>
@@ -160,9 +239,9 @@ export const App: React.FC = () => {
 
         {activeTab === 'demos' && (
           <>
-            {activeDemo === 'quote' && <HomeServiceQuoteDemo />}
-            {activeDemo === 'ops' && <OpsDashboardDemo />}
-            {activeDemo === 'doc' && <DocumentExtractionDemo />}
+            {activeDemo === 'quote' && <HomeServiceQuoteDemo clientBrandName={clientBrandName} />}
+            {activeDemo === 'ops' && <OpsDashboardDemo clientBrandName={clientBrandName} />}
+            {activeDemo === 'doc' && <DocumentExtractionDemo clientBrandName={clientBrandName} />}
           </>
         )}
 
@@ -211,3 +290,4 @@ export const App: React.FC = () => {
 };
 
 export default App;
+
