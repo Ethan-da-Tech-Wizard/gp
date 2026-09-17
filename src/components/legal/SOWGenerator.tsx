@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import { FileCheck, Shield, CheckSquare, Copy, Check, Download, AlertTriangle, Scale, DollarSign } from 'lucide-react';
+import { SplitMode } from '../../App';
+
+interface SOWGeneratorProps {
+  splitMode?: SplitMode;
+}
 
 interface ChecklistItem {
   id: string;
@@ -75,9 +80,14 @@ const INITIAL_LEGAL_CHECKLIST: ChecklistItem[] = [
   }
 ];
 
-export const SOWGenerator: React.FC = () => {
+export const SOWGenerator: React.FC<SOWGeneratorProps> = ({ splitMode = 'auto' }) => {
   const [checklist, setChecklist] = useState<ChecklistItem[]>(INITIAL_LEGAL_CHECKLIST);
   const [copied, setCopied] = useState(false);
+
+  // Layout split classes
+  const containerClass = `split-container-${splitMode}`;
+  const leftClass = `split-left-${splitMode} glass-panel space-y-4`;
+  const rightClass = `split-right-${splitMode} glass-panel space-y-4`;
 
   // SOW Form State
   const [clientName, setClientName] = useState('Desert Sun HVAC & Mechanical');
@@ -192,10 +202,10 @@ Client Signature:    ______________________ Date: _________`;
       </div>
 
       {/* SOW Generator Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className={containerClass}>
         
-        {/* SOW Form (6 cols) */}
-        <div className="lg:col-span-6 glass-panel space-y-4">
+        {/* SOW Form */}
+        <div className={leftClass}>
           <h3 className="text-md font-bold text-main flex items-center gap-2 border-b border-white/10 pb-2">
             <FileCheck className="w-4 h-4 text-emerald-400" />
             1-Page Statement of Work (SOW) Builder
@@ -256,8 +266,8 @@ Client Signature:    ______________________ Date: _________`;
           </div>
         </div>
 
-        {/* SOW Contract Preview (6 cols) */}
-        <div className="lg:col-span-6 glass-panel space-y-4">
+        {/* SOW Contract Preview */}
+        <div className={rightClass}>
           <div className="flex justify-between items-center border-b border-white/10 pb-2">
             <h3 className="text-md font-bold text-main flex items-center gap-2">
               <Shield className="w-4 h-4 text-cyan-400" />

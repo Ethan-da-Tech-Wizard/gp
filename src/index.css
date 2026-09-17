@@ -357,14 +357,55 @@ body {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Layout Grid System */
+/* Layout Grid & Dynamic Split Modes */
 .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
 .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
 
+/* Dynamic Split View Mode Rules */
+.split-container-auto { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1.5rem; }
+.split-left-auto { grid-column: span 5 / span 5; }
+.split-right-auto { grid-column: span 7 / span 7; }
+
+.split-container-equal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+.split-left-equal { grid-column: span 1; }
+.split-right-equal { grid-column: span 1; }
+
+.split-container-focus { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1.5rem; }
+.split-left-focus { grid-column: span 7 / span 7; }
+.split-right-focus { grid-column: span 5 / span 5; }
+
+.split-container-stacked { display: flex; flex-direction: column; gap: 1.5rem; }
+.split-left-stacked, .split-right-stacked { width: 100%; }
+
+/* Text Safety & Overflow Protection */
+* {
+  min-width: 0;
+}
+
+p, span, h1, h2, h3, h4, h5, h6, label, div {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(1, 1fr); }
+  .split-container-auto, .split-container-equal, .split-container-focus {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .split-left-auto, .split-right-auto, .split-left-equal, .split-right-equal, .split-left-focus, .split-right-focus {
+    grid-column: span 12 / span 12;
+    width: 100%;
+  }
 }
 
 @media (max-width: 768px) {

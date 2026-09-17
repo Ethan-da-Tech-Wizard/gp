@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import { Target, Search, Mail, Phone, Building2, TrendingUp, DollarSign, AlertCircle, CheckCircle2, ShieldCheck, FileText, ChevronRight, Calculator } from 'lucide-react';
+import { SplitMode } from '../../App';
+
+interface ProspectingCRMProps {
+  splitMode?: SplitMode;
+}
 
 export interface Prospect {
   id: string;
@@ -101,13 +106,18 @@ const INITIAL_PROSPECTS: Prospect[] = [
   }
 ];
 
-export const ProspectingCRM: React.FC = () => {
+export const ProspectingCRM: React.FC<ProspectingCRMProps> = ({ splitMode = 'auto' }) => {
   const [prospects, setProspects] = useState<Prospect[]>(INITIAL_PROSPECTS);
   const [selectedProspect, setSelectedProspect] = useState<Prospect>(INITIAL_PROSPECTS[0]);
   const [cityFilter, setCityFilter] = useState<string>('All');
   const [verticalFilter, setVerticalFilter] = useState<string>('All');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
+
+  // Layout split classes
+  const containerClass = `split-container-${splitMode}`;
+  const leftClass = `split-left-${splitMode} glass-panel space-y-4`;
+  const rightClass = `split-right-${splitMode} space-y-6`;
 
   // New Prospect Form State
   const [newCompany, setNewCompany] = useState('');
@@ -209,10 +219,10 @@ export const ProspectingCRM: React.FC = () => {
       </div>
 
       {/* Main CRM Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className={containerClass}>
         
-        {/* Left Column: Prospect List (5 cols) */}
-        <div className="lg:col-span-5 glass-panel space-y-4">
+        {/* Left Column: Prospect List */}
+        <div className={leftClass}>
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-main flex items-center gap-2">
               <Target className="w-5 h-5 text-cyan-400" />
@@ -358,8 +368,8 @@ export const ProspectingCRM: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Account Dossier & Outbound Script Engine (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
+        {/* Right Column: Account Dossier & Outbound Script Engine */}
+        <div className={rightClass}>
           
           {/* Dossier Card */}
           <div className="glass-panel space-y-4">

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { BarChart3, Database, Wand2, RefreshCw, Search, CheckCircle2, AlertTriangle, ArrowUpDown, Filter, DollarSign, Target } from 'lucide-react';
+import { SplitMode } from '../../App';
 
 interface OpsDashboardDemoProps {
   clientBrandName?: string;
+  splitMode?: SplitMode;
 }
 
 interface MessyRecord {
@@ -27,7 +29,8 @@ const RAW_MESSY_DATA: MessyRecord[] = [
 ];
 
 export const OpsDashboardDemo: React.FC<OpsDashboardDemoProps> = ({ 
-  clientBrandName = 'Apex Auto & Manufacturing' 
+  clientBrandName = 'Apex Auto & Manufacturing',
+  splitMode = 'auto'
 }) => {
   const [data, setData] = useState<MessyRecord[]>(RAW_MESSY_DATA);
   const [searchTerm, setSearchTerm] = useState('');

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Wrench, Phone, Calendar, User, CheckCircle2, Clock, ArrowRight, ShieldAlert, Sparkles, Send, Tag, Flame } from 'lucide-react';
+import { SplitMode } from '../../App';
 
 interface HomeServiceQuoteDemoProps {
   clientBrandName?: string;
+  splitMode?: SplitMode;
 }
 
 interface QuoteLead {
@@ -46,7 +48,8 @@ const INITIAL_LEADS: QuoteLead[] = [
 ];
 
 export const HomeServiceQuoteDemo: React.FC<HomeServiceQuoteDemoProps> = ({ 
-  clientBrandName = 'Desert Breeze HVAC & Plumbing' 
+  clientBrandName = 'Desert Breeze HVAC & Plumbing',
+  splitMode = 'auto'
 }) => {
   const [leads, setLeads] = useState<QuoteLead[]>(INITIAL_LEADS);
   const [customerName, setCustomerName] = useState('');
@@ -56,6 +59,11 @@ export const HomeServiceQuoteDemo: React.FC<HomeServiceQuoteDemoProps> = ({
   const [notes, setNotes] = useState('');
   const [webDiscount, setWebDiscount] = useState<number>(10);
   const [showNotification, setShowNotification] = useState(false);
+
+  // Layout split classes
+  const containerClass = `split-container-${splitMode}`;
+  const leftClass = `split-left-${splitMode} glass-panel space-y-4`;
+  const rightClass = `split-right-${splitMode} glass-panel space-y-4`;
 
   // Phone auto-formatter (e.g. 4805550192 -> (480) 555-0192)
   const formatPhone = (val: string) => {
@@ -143,10 +151,11 @@ export const HomeServiceQuoteDemo: React.FC<HomeServiceQuoteDemoProps> = ({
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Dynamic Split Layout Container */}
+      <div className={containerClass}>
         
-        {/* Customer Intake Form (5 cols) */}
-        <div className="lg:col-span-5 glass-panel space-y-4">
+        {/* Customer Intake Form */}
+        <div className={leftClass}>
           <div className="flex justify-between items-center border-b border-white/10 pb-2">
             <h3 className="text-md font-bold text-main flex items-center gap-2">
               <Wrench className="w-4 h-4 text-cyan-400" />
@@ -265,8 +274,8 @@ export const HomeServiceQuoteDemo: React.FC<HomeServiceQuoteDemoProps> = ({
           </div>
         </div>
 
-        {/* Dispatcher Board (7 cols) */}
-        <div className="lg:col-span-7 glass-panel space-y-4">
+        {/* Dispatcher Board */}
+        <div className={rightClass}>
           <div className="flex justify-between items-center border-b border-white/10 pb-2">
             <h3 className="text-md font-bold text-main flex items-center gap-2">
               <Calendar className="w-4 h-4 text-emerald-400" />
@@ -336,4 +345,5 @@ export const HomeServiceQuoteDemo: React.FC<HomeServiceQuoteDemoProps> = ({
     </div>
   );
 };
+
 

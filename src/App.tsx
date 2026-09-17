@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Target, Layers, FileText, Code2, Zap, Palette, Sparkles, Building, ChevronRight, ShieldCheck } from 'lucide-react';
+import { Target, Layers, FileText, Code2, Zap, Palette, Sparkles, Building, ChevronRight, ShieldCheck, Columns, LayoutGrid } from 'lucide-react';
 import { ProspectingCRM } from './components/crm/ProspectingCRM';
 import { HomeServiceQuoteDemo } from './components/demos/HomeServiceQuoteDemo';
 import { OpsDashboardDemo } from './components/demos/OpsDashboardDemo';
 import { DocumentExtractionDemo } from './components/demos/DocumentExtractionDemo';
 import { SOWGenerator } from './components/legal/SOWGenerator';
+
+export type SplitMode = 'auto' | 'equal' | 'focus' | 'stacked';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'crm' | 'demos' | 'legal' | 'stack'>('crm');
@@ -13,7 +15,7 @@ export const App: React.FC = () => {
   const [currentTheme, setCurrentTheme] = useState<'cyber' | 'emerald' | 'sunset' | 'cosmic'>('cyber');
   const [customAccent, setCustomAccent] = useState<string>('#00f3ff');
   const [clientBrandName, setClientBrandName] = useState<string>('Desert Breeze Solutions');
-  const [showThemeCustomizer, setShowThemeCustomizer] = useState<boolean>(false);
+  const [splitMode, setSplitMode] = useState<SplitMode>('auto');
 
   // Apply theme attributes to body
   useEffect(() => {
@@ -29,47 +31,83 @@ export const App: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       
-      {/* Dynamic Theme & Personalization Control Bar */}
+      {/* Dynamic Theme & Personalization & Layout Control Bar */}
       <div className="bg-slate-950/90 border-b border-white/10 py-1.5 px-4 text-xs">
         <div className="container flex flex-wrap justify-between items-center gap-3">
+          
+          {/* Theme Switcher */}
           <div className="flex items-center gap-3">
             <span className="text-cyan-400 font-bold flex items-center gap-1">
-              <Palette className="w-3.5 h-3.5" /> Client Showcase Personalizer:
+              <Palette className="w-3.5 h-3.5" /> Personalizer:
             </span>
             
-            {/* Theme Presets */}
             <div className="flex items-center gap-1.5">
               <button 
                 onClick={() => { setCurrentTheme('cyber'); handleCustomColorChange('#00f3ff'); }}
                 className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${currentTheme === 'cyber' ? 'bg-cyan-500 text-black font-extrabold shadow-sm' : 'text-slate-400 hover:text-white'}`}
               >
-                ⚡ Cyber Neon
+                ⚡ Cyber
               </button>
               <button 
                 onClick={() => { setCurrentTheme('emerald'); handleCustomColorChange('#10b981'); }}
                 className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${currentTheme === 'emerald' ? 'bg-emerald-500 text-black font-extrabold shadow-sm' : 'text-slate-400 hover:text-white'}`}
               >
-                💎 Emerald Gold
+                💎 Emerald
               </button>
               <button 
                 onClick={() => { setCurrentTheme('sunset'); handleCustomColorChange('#f97316'); }}
                 className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${currentTheme === 'sunset' ? 'bg-orange-500 text-black font-extrabold shadow-sm' : 'text-slate-400 hover:text-white'}`}
               >
-                🔥 Sunset Flare
+                🔥 Sunset
               </button>
               <button 
                 onClick={() => { setCurrentTheme('cosmic'); handleCustomColorChange('#a855f7'); }}
                 className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all ${currentTheme === 'cosmic' ? 'bg-purple-500 text-black font-extrabold shadow-sm' : 'text-slate-400 hover:text-white'}`}
               >
-                🔮 Cosmic Violet
+                🔮 Cosmic
               </button>
             </div>
           </div>
 
+          {/* Layout Split View Switcher */}
           <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 bg-slate-900 px-2 py-0.5 rounded border border-white/10">
+              <span className="text-cyan-300 font-bold flex items-center gap-1 text-[11px] mr-1">
+                <Columns className="w-3.5 h-3.5 text-cyan-400" /> Layout Split:
+              </span>
+              <button 
+                onClick={() => setSplitMode('auto')}
+                className={`px-2 py-0.5 rounded text-[10px] font-bold ${splitMode === 'auto' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-white'}`}
+                title="Fluid Responsive Auto Split"
+              >
+                📱 Auto
+              </button>
+              <button 
+                onClick={() => setSplitMode('equal')}
+                className={`px-2 py-0.5 rounded text-[10px] font-bold ${splitMode === 'equal' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-white'}`}
+                title="50 / 50 Side-by-Side Dual Split"
+              >
+                ⚖️ 50 / 50 Dual
+              </button>
+              <button 
+                onClick={() => setSplitMode('focus')}
+                className={`px-2 py-0.5 rounded text-[10px] font-bold ${splitMode === 'focus' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-white'}`}
+                title="70 / 30 Focus Ratio Split"
+              >
+                📐 70 / 30 Focus
+              </button>
+              <button 
+                onClick={() => setSplitMode('stacked')}
+                className={`px-2 py-0.5 rounded text-[10px] font-bold ${splitMode === 'stacked' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-white'}`}
+                title="Full-Width Stacked Vertical View"
+              >
+                ⬇️ Stacked
+              </button>
+            </div>
+
             {/* Custom Accent Picker */}
             <div className="flex items-center gap-1.5 bg-slate-900 px-2 py-0.5 rounded border border-white/10">
-              <span className="text-slate-400 text-[11px]">Brand Accent:</span>
+              <span className="text-slate-400 text-[11px]">Accent:</span>
               <input 
                 type="color" 
                 value={customAccent} 
@@ -80,13 +118,13 @@ export const App: React.FC = () => {
 
             {/* Client Business Name Customizer */}
             <div className="flex items-center gap-1.5 bg-slate-900 px-2 py-0.5 rounded border border-white/10">
-              <span className="text-slate-400 text-[11px]">Client Name:</span>
+              <span className="text-slate-400 text-[11px]">Client:</span>
               <input 
                 type="text" 
                 value={clientBrandName}
                 onChange={(e) => setClientBrandName(e.target.value)}
                 placeholder="Enter client company..."
-                className="bg-transparent text-main font-semibold text-[11px] outline-none w-36"
+                className="bg-transparent text-main font-semibold text-[11px] outline-none w-32"
               />
             </div>
           </div>
@@ -235,17 +273,17 @@ export const App: React.FC = () => {
       {/* Main Content Area */}
       <main className="container flex-1 py-6 space-y-6">
         
-        {activeTab === 'crm' && <ProspectingCRM />}
+        {activeTab === 'crm' && <ProspectingCRM splitMode={splitMode} />}
 
         {activeTab === 'demos' && (
           <>
-            {activeDemo === 'quote' && <HomeServiceQuoteDemo clientBrandName={clientBrandName} />}
-            {activeDemo === 'ops' && <OpsDashboardDemo clientBrandName={clientBrandName} />}
-            {activeDemo === 'doc' && <DocumentExtractionDemo clientBrandName={clientBrandName} />}
+            {activeDemo === 'quote' && <HomeServiceQuoteDemo clientBrandName={clientBrandName} splitMode={splitMode} />}
+            {activeDemo === 'ops' && <OpsDashboardDemo clientBrandName={clientBrandName} splitMode={splitMode} />}
+            {activeDemo === 'doc' && <DocumentExtractionDemo clientBrandName={clientBrandName} splitMode={splitMode} />}
           </>
         )}
 
-        {activeTab === 'legal' && <SOWGenerator />}
+        {activeTab === 'legal' && <SOWGenerator splitMode={splitMode} />}
 
         {activeTab === 'stack' && (
           <div className="animate-fade-in space-y-6">
@@ -280,7 +318,7 @@ export const App: React.FC = () => {
       {/* Footer */}
       <footer className="border-t border-white/10 bg-slate-950 py-4 text-center text-xs text-muted">
         <div className="container flex flex-wrap justify-between items-center gap-2">
-          <span>Ethan • On-Call Software Developer for Arizona Businesses</span>
+          <span>Ethan • On-Call Custom Software Developer for Arizona Businesses</span>
           <span className="font-mono text-cyan-400">Mesa • Gilbert • Chandler • Tempe • Phoenix</span>
         </div>
       </footer>

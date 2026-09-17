@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { FileText, Upload, CheckCircle2, AlertTriangle, ShieldAlert, Sparkles, Bot, Eye, HelpCircle, ArrowRight, Zap } from 'lucide-react';
+import { SplitMode } from '../../App';
 
 interface DocumentExtractionDemoProps {
   clientBrandName?: string;
+  splitMode?: SplitMode;
 }
 
 interface ExtractedDoc {
@@ -57,7 +59,8 @@ const SAMPLE_DOCS: ExtractedDoc[] = [
 ];
 
 export const DocumentExtractionDemo: React.FC<DocumentExtractionDemoProps> = ({ 
-  clientBrandName = 'Sun Valley Logistics & Supply' 
+  clientBrandName = 'Sun Valley Logistics & Supply',
+  splitMode = 'auto'
 }) => {
   const [docs, setDocs] = useState<ExtractedDoc[]>(SAMPLE_DOCS);
   const [selectedDoc, setSelectedDoc] = useState<ExtractedDoc>(SAMPLE_DOCS[0]);
@@ -65,6 +68,11 @@ export const DocumentExtractionDemo: React.FC<DocumentExtractionDemoProps> = ({
   const [aiAnswer, setAiAnswer] = useState<string | null>(null);
   const [isProcessingQuery, setIsProcessingQuery] = useState(false);
   const [uploading, setUploading] = useState(false);
+
+  // Layout split classes
+  const containerClass = `split-container-${splitMode}`;
+  const leftClass = `split-left-${splitMode} glass-panel space-y-4 ${uploading ? 'laser-scanner border-cyan-400/80 shadow-2xl' : ''}`;
+  const rightClass = `split-right-${splitMode} space-y-6`;
 
   // Simulated document upload & OCR processing
   const handleSimulatedUpload = () => {
@@ -139,10 +147,11 @@ export const DocumentExtractionDemo: React.FC<DocumentExtractionDemoProps> = ({
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Dynamic Split Layout Container */}
+      <div className={containerClass}>
         
-        {/* Left Column: Document List & Extraction Table (7 cols) */}
-        <div className={`lg:col-span-7 glass-panel space-y-4 ${uploading ? 'laser-scanner border-cyan-400/80 shadow-2xl' : ''}`}>
+        {/* Left Column: Document List & Extraction Table */}
+        <div className={leftClass}>
           <div className="flex justify-between items-center border-b border-white/10 pb-2">
             <h3 className="text-md font-bold text-main flex items-center gap-2">
               <FileText className="w-4 h-4 text-cyan-400" />
@@ -207,8 +216,8 @@ export const DocumentExtractionDemo: React.FC<DocumentExtractionDemoProps> = ({
           </div>
         </div>
 
-        {/* Right Column: Exception Review Drawer & Local LLM Assistant (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
+        {/* Right Column: Exception Review Drawer & Local LLM Assistant */}
+        <div className={rightClass}>
           
           {/* Document Inspection Panel */}
           <div className="glass-panel space-y-3">
@@ -278,4 +287,5 @@ export const DocumentExtractionDemo: React.FC<DocumentExtractionDemoProps> = ({
     </div>
   );
 };
+
 
